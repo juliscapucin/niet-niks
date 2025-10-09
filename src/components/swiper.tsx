@@ -46,6 +46,66 @@ function Results({
             <button className='btn-secondary' onClick={handleRestart}>
                 Restart
             </button>
+            <div className='mt-4 flex gap-4'>
+                <button
+                    className='btn-secondary'
+                    onClick={() => {
+                        const text = `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No`;
+                        const url = encodeURIComponent(window.location.href);
+                        window.open(
+                            `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,
+                            '_blank'
+                        );
+                    }}
+                >
+                    Share on X
+                </button>
+                <button
+                    className='btn-secondary'
+                    onClick={() => {
+                        const text = `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No`;
+                        const url = encodeURIComponent(window.location.href);
+                        window.open(
+                            `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+                            '_blank'
+                        );
+                    }}
+                >
+                    Share on LinkedIn
+                </button>
+                <button
+                    className='btn-secondary'
+                    onClick={() => {
+                        const text = `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No`;
+                        const url = encodeURIComponent(window.location.href);
+                        window.open(
+                            `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encodeURIComponent(text)}`,
+                            '_blank'
+                        );
+                    }}
+                >
+                    Share on Facebook
+                </button>
+                <button
+                    className='btn-secondary'
+                    onClick={() => {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'My Voting Results',
+                                text: `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No`,
+                                url: window.location.href,
+                            });
+                        } else {
+                            navigator.clipboard.writeText(
+                                `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No - ${window.location.href}`
+                            );
+                            alert('Results copied to clipboard!');
+                        }
+                    }}
+                >
+                    Share
+                </button>
+            </div>
         </div>
     );
 }
@@ -105,7 +165,7 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
             custom={exitX}
         >
             <motion.div
-                className='heading-title bg-secondary-faded flex h-full w-full items-center justify-center rounded-xl p-4 text-center'
+                className='heading-title flex h-full w-full items-center justify-center rounded-xl bg-secondary-faded p-4 text-center'
                 style={{ scale }}
             >
                 {proposal.text}
