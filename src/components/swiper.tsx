@@ -15,6 +15,13 @@ type CardProps = {
     isFront: boolean;
 };
 
+type ResultsProps = {
+    yesCount: number;
+    noCount: number;
+    showResults: boolean;
+    handleRestart: () => void;
+};
+
 const initialProposals = [
     { id: 1, text: 'Proposal 1' },
     { id: 2, text: 'Proposal 2' },
@@ -23,11 +30,31 @@ const initialProposals = [
     { id: 5, text: 'Proposal 5' },
 ];
 
+function Results({
+    yesCount,
+    noCount,
+    showResults,
+    handleRestart,
+}: ResultsProps) {
+    return (
+        <div
+            className={`fixed inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-primary ${showResults ? 'translate-y-0' : '-translate-y-full'} transition-transform duration-500`}
+        >
+            <h1 className='heading-headline'>Results</h1>
+            <p className='heading-title'>Yes: {yesCount}</p>
+            <p className='heading-title'>No: {noCount}</p>
+            <button className='btn-secondary' onClick={handleRestart}>
+                Restart
+            </button>
+        </div>
+    );
+}
+
 function Card({ proposal, onSwipe, isFront }: CardProps) {
     const [exitX, setExitX] = useState(0);
     const x = useMotionValue(0);
-    const scale = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
-    const rotate = useTransform(x, [-150, 0, 150], [-45, 0, 45], {
+    const scale = useTransform(x, [-250, 0, 250], [0.5, 1, 0.5]);
+    const rotate = useTransform(x, [-250, 0, 250], [-45, 0, 45], {
         clamp: false,
     });
 
@@ -43,7 +70,7 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
 
     const variantsBackCard = {
         initial: { scale: 0, y: 105, opacity: 0 },
-        animate: { scale: 0.75, y: 30, opacity: 0.5 },
+        animate: { scale: 0.75, y: 65, opacity: 0.8 },
     };
 
     function handleDragEnd(
@@ -61,14 +88,10 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
 
     return (
         <motion.div
+            className='absolute h-full w-full cursor-grab'
             style={{
-                position: 'absolute',
-                top: 0,
-                width: 200,
-                height: 200,
                 x,
                 rotate,
-                cursor: 'grab',
                 zIndex: isFront ? 1 : 0,
             }}
             whileTap={{ cursor: 'grabbing' }}
@@ -82,7 +105,7 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
             custom={exitX}
         >
             <motion.div
-                className='flex h-full w-full items-center justify-center rounded-xl bg-accent text-center text-lg font-semibold'
+                className='heading-title bg-secondary-faded flex h-full w-full items-center justify-center rounded-xl p-4 text-center'
                 style={{ scale }}
             >
                 {proposal.text}
@@ -93,27 +116,50 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
 
 export default function Swiper() {
     const [proposals, setProposals] = useState(initialProposals);
-    const [yesList, setYesList] = useState(0);
-    const [noList, setNoList] = useState(0);
+    const [yesCount, setYesCount] = useState(0);
+    const [noCount, setNoCount] = useState(0);
+    const [showResults, setShowResults] = useState(false);
+
+    const handleRestart = () => {
+        setShowResults(false);
+        setProposals(initialProposals);
+
+        // Small delay to allow the results screen to slide up before resetting
+        setTimeout(() => {
+            setYesCount(0);
+            setNoCount(0);
+        }, 300);
+    };
 
     const handleSwipe = (direction: 'left' | 'right') => {
         const [current, ...rest] = proposals; // Get the first element and the rest
 
         if (!current) return;
 
-        if (direction === 'right') setYesList((prev) => prev + 1);
-        else setNoList((prev) => prev + 1);
+        if (direction === 'right') setYesCount((prev) => prev + 1);
+        if (direction === 'left') setNoCount((prev) => prev + 1);
 
         // Remove the swiped proposal
         setProposals(rest);
+
+        if (rest.length === 0) {
+            //   router.push('/results');
+            setShowResults(true);
+        }
     };
 
     const currentProposal = proposals[0];
     const nextProposal = proposals[1];
 
     return (
-        <div className='relative'>
-            <motion.div className='relative flex h-[200px] w-[300px] items-center justify-center'>
+        <div className='relative flex h-screen w-screen flex-col items-center justify-center'>
+            <Results
+                showResults={showResults}
+                yesCount={yesCount}
+                noCount={noCount}
+                handleRestart={handleRestart}
+            />
+            <motion.div className='relative h-[400px] w-[300px]'>
                 <AnimatePresence initial={false}>
                     {currentProposal && (
                         <Card
@@ -133,8 +179,8 @@ export default function Swiper() {
                     )}
                 </AnimatePresence>{' '}
             </motion.div>
-            <div className='mt-4 text-center'>
-                ✅ Yes: {yesList} | ❌ No: {noList}
+            <div className='heading-title mt-6 flex justify-center gap-4'>
+                <span>✅ Yes: {yesCount}</span> | <span>❌ No: {noCount}</span>
             </div>
         </div>
     );
