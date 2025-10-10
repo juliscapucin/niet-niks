@@ -54,7 +54,7 @@ export default function Results({
 
     return (
         <div
-            className={`fixed inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-primary ${
+            className={`fixed inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-primary ${
                 showResults ? 'translate-y-0' : '-translate-y-full'
             } transition-transform duration-500`}
         >

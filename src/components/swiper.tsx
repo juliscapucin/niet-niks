@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     motion,
     useMotionValue,
@@ -13,7 +13,8 @@ import { Results } from '@/components';
 
 type CardProps = {
     proposal: { id: number; text: string };
-    onSwipe: (direction: 'left' | 'right') => void;
+    onDirectionChange?: (direction: 'left' | 'right' | null) => void;
+    onSwipe?: () => void;
     isFront: boolean;
 };
 
@@ -25,7 +26,7 @@ const initialProposals = [
     { id: 5, text: 'Motie 5' },
 ];
 
-function Card({ proposal, onSwipe, isFront }: CardProps) {
+function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
     const [exitX, setExitX] = useState(0);
     const x = useMotionValue(0);
     const scale = useTransform(x, [-250, 0, 250], [0.5, 1, 0.5]);
@@ -52,12 +53,14 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
         _event: MouseEvent | TouchEvent | PointerEvent,
         info: PanInfo
     ) {
-        if (info.offset.x < -100) {
+        if (!isFront) return;
+        if (onDirectionChange) onDirectionChange(null);
+        if (info.offset.x < -200) {
             setExitX(-250);
-            onSwipe('left');
-        } else if (info.offset.x > 100) {
+            if (onSwipe) onSwipe();
+        } else if (info.offset.x > 200) {
             setExitX(250);
-            onSwipe('right');
+            if (onSwipe) onSwipe();
         }
     }
 
@@ -72,6 +75,21 @@ function Card({ proposal, onSwipe, isFront }: CardProps) {
             whileTap={{ cursor: 'grabbing' }}
             drag='x'
             dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            onDrag={(_, info) => {
+                if (!isFront) return;
+                if (
+                    info.offset.x < 0 &&
+                    info.offset.x > -200 &&
+                    onDirectionChange
+                )
+                    onDirectionChange('left');
+                if (
+                    info.offset.x > 0 &&
+                    info.offset.x < 200 &&
+                    onDirectionChange
+                )
+                    onDirectionChange('right');
+            }}
             onDragEnd={handleDragEnd}
             variants={isFront ? variantsFrontCard : variantsBackCard}
             initial='initial'
@@ -94,10 +112,18 @@ export default function Swiper() {
     const [yesCount, setYesCount] = useState(0);
     const [noCount, setNoCount] = useState(0);
     const [showResults, setShowResults] = useState(false);
+    const [isVoteVisible, setIsVoteVisible] = useState<'yes' | 'no' | null>(
+        null
+    );
+    const [isFeedbackVisible, setIsFeedbackVisible] = useState<
+        'yes' | 'no' | null
+    >(null);
+    const [direction, setDirection] = useState<'left' | 'right' | null>(null);
 
     const handleRestart = () => {
         setShowResults(false);
         setProposals(initialProposals);
+        setIsVoteVisible(null);
 
         // Small delay to allow the results screen to slide up before resetting
         setTimeout(() => {
@@ -106,34 +132,58 @@ export default function Swiper() {
         }, 300);
     };
 
-    const handleSwipe = (direction: 'left' | 'right') => {
+    const handleSwipe = () => {
         const [current, ...rest] = proposals; // Get the first element and the rest
 
         if (!current) return;
 
-        if (direction === 'right') setYesCount((prev) => prev + 1);
-        if (direction === 'left') setNoCount((prev) => prev + 1);
+        if (direction === 'right') {
+            setIsVoteVisible('yes');
+            setYesCount((prev) => prev + 1);
+        }
+        if (direction === 'left') {
+            setIsVoteVisible('no');
+            setNoCount((prev) => prev + 1);
+        }
 
         // Remove the swiped proposal
         setProposals(rest);
 
+        // Clean up state
+        setDirection(null);
+        setIsFeedbackVisible(null);
+        setIsVoteVisible(null);
+
+        // Show results if no proposals left
         if (rest.length === 0) {
             //   router.push('/results');
             setShowResults(true);
         }
     };
 
+    const handleDirection = (dir: 'left' | 'right' | null) => {
+        setDirection(dir);
+    };
+
     const currentProposal = proposals[0];
     const nextProposal = proposals[1];
 
+    useEffect(() => {
+        if (!direction) return;
+
+        setIsFeedbackVisible(direction === 'right' ? 'yes' : 'no');
+    }, [direction]);
+
     return (
-        <div className='relative flex h-screen w-screen flex-col items-center justify-center'>
+        <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
             <Results
                 showResults={showResults}
                 yesCount={yesCount}
                 noCount={noCount}
                 handleRestart={handleRestart}
             />
+
+            {/* CARDS */}
             <motion.div className='relative h-[400px] w-[300px]'>
                 <AnimatePresence initial={false}>
                     {currentProposal && (
@@ -141,6 +191,7 @@ export default function Swiper() {
                             key={currentProposal.id}
                             proposal={currentProposal}
                             onSwipe={handleSwipe}
+                            onDirectionChange={handleDirection}
                             isFront={true}
                         />
                     )}
@@ -148,14 +199,41 @@ export default function Swiper() {
                         <Card
                             key={nextProposal.id}
                             proposal={nextProposal}
-                            onSwipe={handleSwipe}
                             isFront={false}
                         />
                     )}
                 </AnimatePresence>{' '}
             </motion.div>
-            <div className='heading-title mt-6 flex justify-center gap-4'>
-                <span>✅ Yes: {yesCount}</span> | <span>❌ No: {noCount}</span>
+
+            {/* INTERACTION FEEDBAK */}
+            <div className='heading-title absolute z-20 mt-6 w-full'>
+                <motion.span
+                    className={`absolute flex w-full justify-center`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    onAnimationComplete={() => {
+                        setIsFeedbackVisible(null);
+                    }}
+                >
+                    {isFeedbackVisible === 'yes' ? `✅ Ja` : `❌ Nee`}
+                </motion.span>
+            </div>
+
+            {/* VOTE FEEDBACK */}
+            <div className='heading-title relative mt-6 w-full'>
+                <motion.span
+                    className={`absolute flex w-full justify-center`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    onAnimationComplete={() => {
+                        setIsVoteVisible(null);
+                    }}
+                >
+                    {isVoteVisible === 'no' && `❌ Nee`}
+                    {isVoteVisible === 'yes' && `✅ Ja`}
+                </motion.span>
             </div>
         </div>
     );
