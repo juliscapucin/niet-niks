@@ -182,16 +182,17 @@ export default function Swiper() {
             {/** EMPTY STATE */}
             {!currentProposal && !showResults && <EmptyState />}
 
-            {/** SWIPER */}
-            {currentProposal && !showResults && (
-                <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
-                    <Results
-                        showResults={showResults}
-                        yesCount={yesCount}
-                        noCount={noCount}
-                        handleRestart={handleRestart}
-                    />
+            {/** RESULTS */}
+            <Results
+                showResults={showResults}
+                yesCount={yesCount}
+                noCount={noCount}
+                handleRestart={handleRestart}
+            />
 
+            {/** SWIPER */}
+            {currentProposal && (
+                <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
                     {/* CARDS */}
                     <motion.div className='relative h-[400px] w-[300px]'>
                         <AnimatePresence initial={false}>
