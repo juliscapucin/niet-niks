@@ -13,7 +13,7 @@ import { Results } from '@/components';
 
 type CardProps = {
     proposal: { id: number; text: string };
-    onDirectionChange?: (direction: 'left' | 'right' | null) => void;
+    onDirectionChange: (direction: 'left' | 'right' | null) => void;
     onSwipe?: () => void;
     isFront: boolean;
 };
@@ -54,13 +54,19 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
         info: PanInfo
     ) {
         if (!isFront) return;
-        if (onDirectionChange) onDirectionChange(null);
+
+        console.log('drag end');
         if (info.offset.x < -200) {
             setExitX(-250);
+            onDirectionChange('left');
             if (onSwipe) onSwipe();
         } else if (info.offset.x > 200) {
             setExitX(250);
+            onDirectionChange('right');
             if (onSwipe) onSwipe();
+        } else {
+            // No swipe: reset direction
+            onDirectionChange(null);
         }
     }
 
@@ -77,17 +83,9 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
             dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
             onDrag={(_, info) => {
                 if (!isFront) return;
-                if (
-                    info.offset.x < 0 &&
-                    info.offset.x > -200 &&
-                    onDirectionChange
-                )
+                if (info.offset.x < 0 && info.offset.x > -200)
                     onDirectionChange('left');
-                if (
-                    info.offset.x > 0 &&
-                    info.offset.x < 200 &&
-                    onDirectionChange
-                )
+                if (info.offset.x > 0 && info.offset.x < 200)
                     onDirectionChange('right');
             }}
             onDragEnd={handleDragEnd}
@@ -112,18 +110,16 @@ export default function Swiper() {
     const [yesCount, setYesCount] = useState(0);
     const [noCount, setNoCount] = useState(0);
     const [showResults, setShowResults] = useState(false);
-    const [isVoteVisible, setIsVoteVisible] = useState<'yes' | 'no' | null>(
-        null
-    );
-    const [isFeedbackVisible, setIsFeedbackVisible] = useState<
-        'yes' | 'no' | null
-    >(null);
+    const [isVoteVisible, setIsVoteVisible] = useState(false);
+    const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
     const [direction, setDirection] = useState<'left' | 'right' | null>(null);
 
     const handleRestart = () => {
         setShowResults(false);
         setProposals(initialProposals);
-        setIsVoteVisible(null);
+        setIsVoteVisible(false);
+        setIsFeedbackVisible(false);
+        setDirection(null);
 
         // Small delay to allow the results screen to slide up before resetting
         setTimeout(() => {
@@ -138,21 +134,18 @@ export default function Swiper() {
         if (!current) return;
 
         if (direction === 'right') {
-            setIsVoteVisible('yes');
+            setIsVoteVisible(true);
             setYesCount((prev) => prev + 1);
         }
         if (direction === 'left') {
-            setIsVoteVisible('no');
+            setIsVoteVisible(true);
             setNoCount((prev) => prev + 1);
         }
 
+        setIsFeedbackVisible(false);
+
         // Remove the swiped proposal
         setProposals(rest);
-
-        // Clean up state
-        setDirection(null);
-        setIsFeedbackVisible(null);
-        setIsVoteVisible(null);
 
         // Show results if no proposals left
         if (rest.length === 0) {
@@ -169,9 +162,9 @@ export default function Swiper() {
     const nextProposal = proposals[1];
 
     useEffect(() => {
-        if (!direction) return;
+        if (!direction) setIsFeedbackVisible(false);
 
-        setIsFeedbackVisible(direction === 'right' ? 'yes' : 'no');
+        setIsFeedbackVisible(true);
     }, [direction]);
 
     return (
@@ -199,41 +192,51 @@ export default function Swiper() {
                         <Card
                             key={nextProposal.id}
                             proposal={nextProposal}
+                            onDirectionChange={handleDirection}
                             isFront={false}
                         />
                     )}
                 </AnimatePresence>{' '}
             </motion.div>
 
-            {/* INTERACTION FEEDBAK */}
+            {/* INTERACTION FEEDBACK */}
             <div className='heading-title absolute z-20 mt-6 w-full'>
-                <motion.span
-                    className={`absolute flex w-full justify-center`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    onAnimationComplete={() => {
-                        setIsFeedbackVisible(null);
-                    }}
-                >
-                    {isFeedbackVisible === 'yes' ? `✅ Ja` : `❌ Nee`}
-                </motion.span>
+                <AnimatePresence>
+                    {isFeedbackVisible && direction && (
+                        <motion.span
+                            className='absolute flex w-full justify-center'
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {direction === 'right' ? '✅ Ja' : '❌ Nee'}
+                        </motion.span>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* VOTE FEEDBACK */}
             <div className='heading-title relative mt-6 w-full'>
-                <motion.span
-                    className={`absolute flex w-full justify-center`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    onAnimationComplete={() => {
-                        setIsVoteVisible(null);
-                    }}
-                >
-                    {isVoteVisible === 'no' && `❌ Nee`}
-                    {isVoteVisible === 'yes' && `✅ Ja`}
-                </motion.span>
+                <AnimatePresence>
+                    {isVoteVisible && (
+                        <motion.span
+                            className={`absolute flex w-full justify-center`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                            onAnimationComplete={() => {
+                                setTimeout(() => {
+                                    setIsVoteVisible(false);
+                                }, 500);
+                            }}
+                        >
+                            {direction && direction === 'right'
+                                ? `✅ Ja`
+                                : `❌ Nee`}
+                        </motion.span>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
