@@ -1,5 +1,9 @@
 'use client';
 
+const SWIPE_THRESHOLD = 200;
+const DRAG_FEEDBACK_THRESHOLD = 10;
+const CARD_EXIT_DISTANCE = 250;
+
 import { useEffect, useState } from 'react';
 import {
     motion,
@@ -55,19 +59,32 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
     ) {
         if (!isFront) return;
 
-        console.log('drag end');
-        if (info.offset.x < -200) {
-            setExitX(-250);
+        if (info.offset.x < -SWIPE_THRESHOLD) {
+            setExitX(-CARD_EXIT_DISTANCE);
             onDirectionChange('left');
             if (onSwipe) onSwipe();
-        } else if (info.offset.x > 200) {
-            setExitX(250);
+        } else if (info.offset.x > SWIPE_THRESHOLD) {
+            setExitX(CARD_EXIT_DISTANCE);
             onDirectionChange('right');
             if (onSwipe) onSwipe();
         } else {
             // No swipe: reset direction
             onDirectionChange(null);
         }
+    }
+
+    function handleDragStart(info: PanInfo) {
+        if (!isFront) return;
+        if (
+            info.offset.x < -DRAG_FEEDBACK_THRESHOLD &&
+            info.offset.x > -SWIPE_THRESHOLD
+        )
+            onDirectionChange('left');
+        if (
+            info.offset.x > DRAG_FEEDBACK_THRESHOLD &&
+            info.offset.x < SWIPE_THRESHOLD
+        )
+            onDirectionChange('right');
     }
 
     return (
@@ -81,13 +98,7 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
             whileTap={{ cursor: 'grabbing' }}
             drag='x'
             dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            onDrag={(_, info) => {
-                if (!isFront) return;
-                if (info.offset.x < 0 && info.offset.x > -200)
-                    onDirectionChange('left');
-                if (info.offset.x > 0 && info.offset.x < 200)
-                    onDirectionChange('right');
-            }}
+            onDrag={(_, info) => handleDragStart(info)}
             onDragEnd={handleDragEnd}
             variants={isFront ? variantsFrontCard : variantsBackCard}
             initial='initial'
@@ -95,10 +106,7 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
             exit='exit'
             custom={exitX}
         >
-            <motion.div
-                className='heading-title flex h-full w-full items-center justify-center rounded-xl bg-secondary-faded p-4 text-center'
-                style={{ scale }}
-            >
+            <motion.div className='heading-title flex h-full w-full items-center justify-center rounded-xl bg-secondary-faded p-4 text-center'>
                 {proposal.text}
             </motion.div>
         </motion.div>
@@ -142,6 +150,7 @@ export default function Swiper() {
             setNoCount((prev) => prev + 1);
         }
 
+        // Hide feedback after swipe
         setIsFeedbackVisible(false);
 
         // Remove the swiped proposal
@@ -149,7 +158,6 @@ export default function Swiper() {
 
         // Show results if no proposals left
         if (rest.length === 0) {
-            //   router.push('/results');
             setShowResults(true);
         }
     };
@@ -158,86 +166,115 @@ export default function Swiper() {
         setDirection(dir);
     };
 
+    const handleHideVote = () => {
+        setIsVoteVisible(false);
+    };
+
     const currentProposal = proposals[0];
     const nextProposal = proposals[1];
 
     useEffect(() => {
-        if (!direction) setIsFeedbackVisible(false);
-
-        setIsFeedbackVisible(true);
+        setIsFeedbackVisible(!!direction); // convert direction to boolean
     }, [direction]);
 
     return (
-        <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
-            <Results
-                showResults={showResults}
-                yesCount={yesCount}
-                noCount={noCount}
-                handleRestart={handleRestart}
-            />
+        <>
+            {/** EMPTY STATE */}
+            {!currentProposal && !showResults && <EmptyState />}
 
-            {/* CARDS */}
-            <motion.div className='relative h-[400px] w-[300px]'>
-                <AnimatePresence initial={false}>
-                    {currentProposal && (
-                        <Card
-                            key={currentProposal.id}
-                            proposal={currentProposal}
-                            onSwipe={handleSwipe}
-                            onDirectionChange={handleDirection}
-                            isFront={true}
+            {/** SWIPER */}
+            {currentProposal && !showResults && (
+                <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
+                    <Results
+                        showResults={showResults}
+                        yesCount={yesCount}
+                        noCount={noCount}
+                        handleRestart={handleRestart}
+                    />
+
+                    {/* CARDS */}
+                    <motion.div className='relative h-[400px] w-[300px]'>
+                        <AnimatePresence initial={false}>
+                            {currentProposal && (
+                                <Card
+                                    key={currentProposal.id}
+                                    proposal={currentProposal}
+                                    onSwipe={handleSwipe}
+                                    onDirectionChange={handleDirection}
+                                    isFront={true}
+                                />
+                            )}
+                            {nextProposal && (
+                                <Card
+                                    key={nextProposal.id}
+                                    proposal={nextProposal}
+                                    onDirectionChange={handleDirection}
+                                    isFront={false}
+                                />
+                            )}
+                        </AnimatePresence>{' '}
+                    </motion.div>
+
+                    {/* INTERACTION FEEDBACK */}
+                    <div className='heading-title absolute z-20 mt-6 w-full'>
+                        <FeedbackDisplay
+                            direction={direction}
+                            isVisible={isFeedbackVisible}
                         />
-                    )}
-                    {nextProposal && (
-                        <Card
-                            key={nextProposal.id}
-                            proposal={nextProposal}
-                            onDirectionChange={handleDirection}
-                            isFront={false}
+                    </div>
+
+                    {/* VOTE FEEDBACK */}
+                    <div className='heading-title relative mt-6 w-full'>
+                        <FeedbackDisplay
+                            direction={direction}
+                            isVisible={isVoteVisible}
+                            isVote={true}
+                            onHideVote={handleHideVote}
                         />
-                    )}
-                </AnimatePresence>{' '}
-            </motion.div>
-
-            {/* INTERACTION FEEDBACK */}
-            <div className='heading-title absolute z-20 mt-6 w-full'>
-                <AnimatePresence>
-                    {isFeedbackVisible && direction && (
-                        <motion.span
-                            className='absolute flex w-full justify-center'
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {direction === 'right' ? '✅ Ja' : '❌ Nee'}
-                        </motion.span>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {/* VOTE FEEDBACK */}
-            <div className='heading-title relative mt-6 w-full'>
-                <AnimatePresence>
-                    {isVoteVisible && (
-                        <motion.span
-                            className={`absolute flex w-full justify-center`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                            onAnimationComplete={() => {
-                                setTimeout(() => {
-                                    setIsVoteVisible(false);
-                                }, 500);
-                            }}
-                        >
-                            {direction && direction === 'right'
-                                ? `✅ Ja`
-                                : `❌ Nee`}
-                        </motion.span>
-                    )}
-                </AnimatePresence>
-            </div>
-        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
+
+type FeedbackDisplayProps = {
+    direction: 'left' | 'right' | null;
+    isVisible: boolean;
+    isVote?: boolean;
+    onHideVote?: () => void;
+};
+
+const FeedbackDisplay = ({
+    direction,
+    isVisible,
+    isVote,
+    onHideVote,
+}: FeedbackDisplayProps) => (
+    <AnimatePresence>
+        {isVisible && direction && (
+            <motion.span
+                className='absolute flex w-full justify-center'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                onAnimationComplete={() => {
+                    if (isVote && onHideVote) onHideVote();
+                }}
+            >
+                {direction === 'right' ? '✅ Ja' : '❌ Nee'}
+            </motion.span>
+        )}
+    </AnimatePresence>
+);
+
+const EmptyState = () => (
+    <div className='flex h-full w-screen items-center justify-center p-8'>
+        <div className='container flex h-full items-center justify-center rounded-xl bg-secondary-faded p-4'>
+            <h1 className='heading-title text-center'>
+                Geen moties meer om te beoordelen.
+            </h1>
+        </div>
+    </div>
+);
