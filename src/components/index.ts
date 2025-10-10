@@ -1,2 +1,4 @@
+import Results from './results';
 import Swiper from './swiper';
-export { Swiper };
+
+export { Results, Swiper };

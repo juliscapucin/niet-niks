@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: 'Niet Niks',
     description:
-        'Een stemwijzer/kieswijzer die kijkt naar politieke partijen op basis van hun standpunten over de situatie in Gaza',
+        'Een kieswijzer die kijkt naar politieke partijen op basis van hun standpunten over de situatie in Gaza',
 };
 
 export default function RootLayout({

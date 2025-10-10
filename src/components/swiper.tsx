@@ -9,6 +9,8 @@ import {
     PanInfo,
 } from 'framer-motion';
 
+import { Results } from '@/components';
+
 type CardProps = {
     proposal: { id: number; text: string };
     onSwipe: (direction: 'left' | 'right') => void;
@@ -16,110 +18,12 @@ type CardProps = {
 };
 
 const initialProposals = [
-    { id: 1, text: 'Proposal 1' },
-    { id: 2, text: 'Proposal 2' },
-    { id: 3, text: 'Proposal 3' },
-    { id: 4, text: 'Proposal 4' },
-    { id: 5, text: 'Proposal 5' },
+    { id: 1, text: 'Motie 1' },
+    { id: 2, text: 'Motie 2' },
+    { id: 3, text: 'Motie 3' },
+    { id: 4, text: 'Motie 4' },
+    { id: 5, text: 'Motie 5' },
 ];
-
-type ResultsProps = {
-    yesCount: number;
-    noCount: number;
-    showResults: boolean;
-    handleRestart: () => void;
-};
-
-function Results({
-    yesCount,
-    noCount,
-    showResults,
-    handleRestart,
-}: ResultsProps) {
-    const handleShare = (
-        platform: 'twitter' | 'linkedin' | 'facebook' | 'native'
-    ) => {
-        if (typeof window === 'undefined') return;
-
-        const text = `I just voted on proposals! Results: ${yesCount} Yes, ${noCount} No`;
-        const encodedText = encodeURIComponent(text);
-        const encodedUrl = encodeURIComponent(window.location.href);
-
-        let shareUrl = '';
-
-        switch (platform) {
-            case 'twitter':
-                shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
-                break;
-            case 'linkedin':
-                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
-                break;
-            case 'facebook':
-                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-                break;
-            case 'native':
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'My Voting Results',
-                        text,
-                        url: window.location.href,
-                    });
-                    return;
-                } else {
-                    navigator.clipboard.writeText(
-                        `${text} - ${window.location.href}`
-                    );
-                    alert('Results copied to clipboard!');
-                    return;
-                }
-        }
-
-        if (shareUrl) window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    };
-
-    return (
-        <div
-            className={`fixed inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-primary ${
-                showResults ? 'translate-y-0' : '-translate-y-full'
-            } transition-transform duration-500`}
-        >
-            <h1 className='heading-headline'>Results</h1>
-            <p className='heading-title'>Yes: {yesCount}</p>
-            <p className='heading-title'>No: {noCount}</p>
-
-            <button className='btn-secondary' onClick={handleRestart}>
-                Restart
-            </button>
-
-            <div className='mt-4 flex gap-4'>
-                <button
-                    className='btn-secondary'
-                    onClick={() => handleShare('twitter')}
-                >
-                    Share on X
-                </button>
-                <button
-                    className='btn-secondary'
-                    onClick={() => handleShare('linkedin')}
-                >
-                    Share on LinkedIn
-                </button>
-                <button
-                    className='btn-secondary'
-                    onClick={() => handleShare('facebook')}
-                >
-                    Share on Facebook
-                </button>
-                <button
-                    className='btn-secondary'
-                    onClick={() => handleShare('native')}
-                >
-                    Share
-                </button>
-            </div>
-        </div>
-    );
-}
 
 function Card({ proposal, onSwipe, isFront }: CardProps) {
     const [exitX, setExitX] = useState(0);
