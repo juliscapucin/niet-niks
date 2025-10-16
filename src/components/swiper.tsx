@@ -13,7 +13,10 @@ import {
     PanInfo,
 } from 'framer-motion';
 
+import data from '@/lib/data.json';
 import { Results } from '@/components';
+
+const initialProposals = data.affirmations;
 
 type CardProps = {
     proposal: { id: number; text: string };
@@ -22,18 +25,16 @@ type CardProps = {
     isFront: boolean;
 };
 
-const initialProposals = [
-    { id: 1, text: 'Motie 1' },
-    { id: 2, text: 'Motie 2' },
-    { id: 3, text: 'Motie 3' },
-    { id: 4, text: 'Motie 4' },
-    { id: 5, text: 'Motie 5' },
-];
+type MoodKey =
+    | 'cosmicChill'
+    | 'mainCharacter'
+    | 'chaoticGood'
+    | 'softExistential';
 
 function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
     const [exitX, setExitX] = useState(0);
     const x = useMotionValue(0);
-    const scale = useTransform(x, [-250, 0, 250], [0.5, 1, 0.5]);
+    //  const scale = useTransform(x, [-250, 0, 250], [0.5, 1, 0.5]);
     const rotate = useTransform(x, [-250, 0, 250], [-45, 0, 45], {
         clamp: false,
     });
@@ -115,8 +116,7 @@ function Card({ proposal, onSwipe, onDirectionChange, isFront }: CardProps) {
 
 export default function Swiper() {
     const [proposals, setProposals] = useState(initialProposals);
-    const [yesCount, setYesCount] = useState(0);
-    const [noCount, setNoCount] = useState(0);
+    const [moodCount, setMoodCount] = useState<MoodKey[]>([]);
     const [showResults, setShowResults] = useState(false);
     const [isVoteVisible, setIsVoteVisible] = useState(false);
     const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
@@ -131,8 +131,7 @@ export default function Swiper() {
 
         // Small delay to allow the results screen to slide up before resetting
         setTimeout(() => {
-            setYesCount(0);
-            setNoCount(0);
+            setMoodCount([]);
         }, 300);
     };
 
@@ -143,11 +142,12 @@ export default function Swiper() {
 
         if (direction === 'right') {
             setIsVoteVisible(true);
-            setYesCount((prev) => prev + 1);
+
+            // Only count moods if swiped right
+            setMoodCount((prev) => [...prev, ...(current.moods as MoodKey[])]);
         }
         if (direction === 'left') {
             setIsVoteVisible(true);
-            setNoCount((prev) => prev + 1);
         }
 
         // Hide feedback after swipe
@@ -185,8 +185,7 @@ export default function Swiper() {
             {/** RESULTS */}
             <Results
                 showResults={showResults}
-                yesCount={yesCount}
-                noCount={noCount}
+                moodCount={moodCount}
                 handleRestart={handleRestart}
             />
 
@@ -264,7 +263,7 @@ const FeedbackDisplay = ({
                     if (isVote && onHideVote) onHideVote();
                 }}
             >
-                {direction === 'right' ? '✅ Ja' : '❌ Nee'}
+                {direction === 'right' ? '✅ Yes' : '❌ No'}
             </motion.span>
         )}
     </AnimatePresence>
@@ -274,7 +273,7 @@ const EmptyState = () => (
     <div className='flex h-full w-screen items-center justify-center p-8'>
         <div className='container flex h-full items-center justify-center rounded-xl bg-secondary-faded p-4'>
             <h1 className='heading-title text-center'>
-                Geen moties meer om te beoordelen.
+                No more affirmations available. Please restart the quiz.
             </h1>
         </div>
     </div>

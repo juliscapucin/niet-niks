@@ -1,0 +1,76 @@
+{
+  "affirmations": [
+    {
+      "id": 1,
+      "text": "I’m not stressed, I’m just dramatically processing.",
+      "moods": ["softExistential", "chaoticGood"]
+    },
+    {
+      "id": 2,
+      "text": "I’m choosing peace… unless it’s boring.",
+      "moods": ["cosmicChill", "mainCharacter"]
+    },
+    {
+      "id": 3,
+      "text": "I’m a work in progress, and that’s iconic.",
+      "moods": ["mainCharacter", "softExistential"]
+    },
+    {
+      "id": 4,
+      "text": "I bring main character energy to even the grocery store.",
+      "moods": ["mainCharacter"]
+    },
+    {
+      "id": 5,
+      "text": "My plan for today is to vibe and see what happens.",
+      "moods": ["cosmicChill", "chaoticGood"]
+    },
+    {
+      "id": 6,
+      "text": "I love when the universe sends me chaos disguised as opportunity.",
+      "moods": ["chaoticGood", "softExistential"]
+    },
+    {
+      "id": 7,
+      "text": "I deserve rest without earning it.",
+      "moods": ["cosmicChill", "softExistential"]
+    },
+    {
+      "id": 8,
+      "text": "I might be delusional, but at least I’m optimistic.",
+      "moods": ["mainCharacter", "chaoticGood"]
+    },
+    {
+      "id": 9,
+      "text": "I’m romanticizing being mildly unproductive.",
+      "moods": ["softExistential", "cosmicChill"]
+    },
+    {
+      "id": 10,
+      "text": "My aura is currently buffering.",
+      "moods": ["softExistential", "cosmicChill"]
+    }
+  ],
+  "moods": {
+    "cosmicChill": {
+      "name": "Cosmic Chill",
+      "emoji": "✨",
+      "description": "Calm, grounded, effortlessly unbothered — you’re floating through it gracefully."
+    },
+    "mainCharacter": {
+      "name": "Main Character Energy",
+      "emoji": "🔥",
+      "description": "Confident, dramatic, self-assured — life is your movie and you’re in every scene."
+    },
+    "chaoticGood": {
+      "name": "Chaotic Good",
+      "emoji": "🌪",
+      "description": "Impulsive, creative, kind — you thrive in the mess and make it look fun."
+    },
+    "softExistential": {
+      "name": "Soft Existential",
+      "emoji": "🌙",
+      "description": "Reflective, dreamy, and beautifully overthinking everything — and that’s your superpower."
+    }
+  }
+}
