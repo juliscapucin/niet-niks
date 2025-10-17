@@ -1,14 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+type StartProps = {
+    started: boolean;
+    onStart: () => void;
+};
 
-export default function Start() {
-    const [started, setStarted] = useState(false);
-
-    const onStart = () => {
-        setStarted(true);
-    };
-
+export default function Start({ started, onStart }: StartProps) {
     return (
         <div
             className={`absolute inset-0 z-30 flex flex-col items-center justify-center bg-primary px-6 text-center transition-transform duration-500 ${

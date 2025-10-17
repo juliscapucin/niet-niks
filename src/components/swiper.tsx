@@ -14,7 +14,11 @@ type MoodKey =
     | 'chaoticGood'
     | 'softExistential';
 
-export default function Swiper() {
+type SwiperProps = {
+    started: boolean;
+};
+
+export default function Swiper({ started }: SwiperProps) {
     const [proposals, setProposals] = useState(initialProposals);
     const [moodCount, setMoodCount] = useState<MoodKey[]>([]);
     const [showResults, setShowResults] = useState(false);
@@ -76,6 +80,12 @@ export default function Swiper() {
     useEffect(() => {
         setIsFeedbackVisible(!!direction); // convert direction to boolean
     }, [direction]);
+
+    useEffect(() => {
+        if (started) {
+            handleRestart();
+        }
+    }, [started]);
 
     return (
         <>
