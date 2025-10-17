@@ -1,4 +1,5 @@
+import Card from './card';
 import Results from './results';
 import Swiper from './swiper';
 
-export { Results, Swiper };
+export { Card, Results, Swiper };

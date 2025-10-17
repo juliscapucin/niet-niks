@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Niet Niks',
+    title: 'MoodSwipe',
     description:
-        'Een kieswijzer die kijkt naar politieke partijen op basis van hun standpunten over de situatie in Gaza',
+        'How do you feel today? Swipe through affirmations and discover your daily mood.',
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
     return (
         <html lang='en'>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} text-secondary antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} overflow-clip bg-primary text-secondary antialiased`}
             >
                 {children}
             </body>

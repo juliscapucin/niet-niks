@@ -46,7 +46,7 @@ export default function Results({
             case 'native':
                 if (navigator.share) {
                     navigator.share({
-                        title: 'My result on MoodTchecker',
+                        title: 'My result on MoodSwipe',
                         text,
                         url: window.location.href,
                     });
@@ -97,7 +97,7 @@ export default function Results({
 
     return (
         <div
-            className={`fixed inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-primary ${
+            className={`fixed inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-secondary text-primary ${
                 showResults ? 'translate-y-0' : '-translate-y-full'
             } transition-transform duration-500`}
         >
@@ -117,7 +117,7 @@ export default function Results({
                 </>
             )}
 
-            <button className='btn-secondary' onClick={handleRestart}>
+            <button className='btn-primary' onClick={handleRestart}>
                 Restart quiz
             </button>
 
@@ -132,7 +132,7 @@ export default function Results({
                     ].map(({ platform, label }) => (
                         <button
                             key={platform}
-                            className='btn-secondary'
+                            className='btn-primary'
                             onClick={() => handleShare(platform)}
                         >
                             {label}

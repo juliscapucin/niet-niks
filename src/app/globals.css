@@ -1,18 +1,19 @@
 @import 'tailwindcss';
 
 :root {
-    --primary: oklch(84.435% 0.00777 260.867);
-    --secondary: oklch(28.601% 0.00924 276.782);
-    --secondary-faded: oklch(78.313% 0.01763 271.196);
-    --accent: oklch(68.066% 0.14695 67.651);
+    --primary: oklch(13.735% 0.06106 261.452);
+    --secondary: oklch(92.4% 0.12 95.746);
+    --accent-red: oklch(54.781% 0.21983 28.732);
+    --accent-blue: oklch(55.217% 0.23421 264.583);
+    --accent-green: oklch(65.217% 0.20321 142.583);
 }
 
 @theme inline {
     --color-primary: var(--primary);
-    --color-primary-accent: var(--primary-accent);
     --color-secondary: var(--secondary);
-    --color-secondary-faded: var(--secondary-faded);
-    --color-accent: var(--accent);
+    --color-accent-red: var(--accent-red);
+    --color-accent-blue: var(--accent-blue);
+    --color-accent-green: var(--accent-green);
 
     --font-primary: var(--font-acma);
     --font-secondary: var(--font-noto);
@@ -104,7 +105,7 @@
     }
 
     .btn-primary {
-        @apply bg-primary px-4 py-2 font-medium text-secondary transition-colors duration-300 hover:bg-secondary hover:text-primary;
+        @apply bg-primary px-4 py-2 font-medium text-secondary transition-colors duration-300 hover:bg-accent-blue;
     }
 
     .btn-secondary {
@@ -124,6 +125,9 @@
     }
 
     /* HEADING STYLES */
+    .heading-feedback {
+        @apply text-[20vw] leading-none font-thin uppercase mix-blend-overlay lg:text-[30vw] xl:text-[30vw];
+    }
     .heading-display {
         @apply text-display-small leading-none font-thin lg:text-display-medium xl:text-display-large;
     }
