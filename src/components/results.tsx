@@ -131,7 +131,7 @@ export default function Results({
                     ].map(({ platform, label }) => (
                         <button
                             key={platform}
-                            className='btn-primary'
+                            className='btn btn-accent-blue'
                             onClick={() => handleShare(platform)}
                         >
                             {label}
@@ -139,7 +139,7 @@ export default function Results({
                     ))}
                 </div>
             </div>
-            <button className='btn-primary mt-4' onClick={handleRestart}>
+            <button className='btn btn-primary mt-4' onClick={handleRestart}>
                 Restart quiz
             </button>
         </div>
