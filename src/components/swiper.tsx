@@ -91,7 +91,7 @@ export default function Swiper() {
 
             {/** SWIPER */}
             {currentProposal && (
-                <div className='relative container flex h-screen w-screen items-center justify-center'>
+                <div className='relative container flex h-screen w-screen flex-col items-center justify-center'>
                     {/* CARDS */}
                     <motion.div className='relative h-[49vh] max-h-[600px] min-h-[400px] w-[20vw] max-w-[380px] min-w-[350px]'>
                         <AnimatePresence initial={false}>
@@ -116,7 +116,7 @@ export default function Swiper() {
                     </motion.div>
 
                     {/* INTERACTION FEEDBACK */}
-                    <div className='heading-title absolute bottom-0 z-20 mb-6 w-full'>
+                    <div className='heading-title pointer-events-none absolute bottom-0 z-20 mb-6 w-full'>
                         <FeedbackDisplay
                             direction={direction}
                             isVisible={isFeedbackVisible}
@@ -124,14 +124,14 @@ export default function Swiper() {
                     </div>
 
                     {/* VOTE FEEDBACK */}
-                    {/* <div className='heading-title relative mt-6 w-full'>
+                    <div className='heading-title pointer-events-none absolute bottom-0 z-20 mb-6 w-full'>
                         <FeedbackDisplay
                             direction={direction}
                             isVisible={isVoteVisible}
                             isVote={true}
                             onHideVote={handleHideVote}
                         />
-                    </div> */}
+                    </div>
                 </div>
             )}
         </>

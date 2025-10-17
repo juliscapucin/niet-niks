@@ -97,32 +97,33 @@ export default function Results({
 
     return (
         <div
-            className={`fixed inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-secondary text-primary ${
+            className={`fixed inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-primary ${
                 showResults ? 'translate-y-0' : '-translate-y-full'
             } transition-transform duration-500`}
         >
-            <h1 className='heading-headline'>Results</h1>
+            <h1 className='heading-display'>Results</h1>
+
+            {/* FINAL RESULT */}
             {finalResult && (
-                <>
+                <div className='max-w-prose rounded-3xl bg-secondary p-8'>
                     <h2 className='heading-title'>
                         {finalResult && results[finalResult]
                             ? results[finalResult].name
                             : 'No dominant mood detected'}
                     </h2>
-                    <p>
+                    <p className='mt-4'>
                         {finalResult && results[finalResult]
                             ? results[finalResult].description
                             : ''}
                     </p>
-                </>
+                </div>
             )}
 
-            <button className='btn-primary' onClick={handleRestart}>
-                Restart quiz
-            </button>
-
-            <div className='flex flex-col items-center justify-center'>
-                <h2 className='heading-title mt-4'>Share your result</h2>
+            {/* SHARE BUTTONS */}
+            <div className='mt-4 flex flex-col items-center justify-center rounded-3xl bg-accent-blue p-8'>
+                <h2 className='heading-title text-secondary'>
+                    Share your result
+                </h2>
                 <div className='mt-4 flex gap-4'>
                     {[
                         { platform: 'twitter' as const, label: 'X' },
@@ -140,6 +141,9 @@ export default function Results({
                     ))}
                 </div>
             </div>
+            <button className='btn-primary mt-4' onClick={handleRestart}>
+                Restart quiz
+            </button>
         </div>
     );
 }

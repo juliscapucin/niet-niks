@@ -28,18 +28,24 @@ export default function Card({
     });
 
     const variantsFrontCard = {
-        animate: { scale: 1, y: 0, opacity: 1 },
+        animate: {
+            scale: 1,
+            y: 0,
+            x: 0,
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            opacity: 1,
+        },
         exit: (custom: number) => ({
             x: custom,
-            opacity: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0)',
             scale: 0.5,
             transition: { duration: 0.3 },
         }),
     };
 
     const variantsBackCard = {
-        initial: { scale: 0, y: 105, opacity: 0 },
-        animate: { scale: 0.75, y: 65, opacity: 0.8 },
+        initial: { scale: 0, y: 0, x: 0, opacity: 0 },
+        animate: { scale: 0.95, y: 30, x: 10, opacity: 1 },
     };
 
     function handleDragEnd(
@@ -78,7 +84,7 @@ export default function Card({
 
     return (
         <motion.div
-            className='absolute h-full w-full cursor-grab'
+            className='absolute h-full w-full cursor-grab overflow-clip rounded-xl'
             style={{
                 x,
                 rotate,
@@ -96,8 +102,8 @@ export default function Card({
             custom={exitX}
         >
             <motion.div
-                className={`heading-title flex h-full w-full items-center justify-center rounded-xl p-8 text-center text-pretty text-primary ${
-                    isFront ? 'bg-secondary' : 'bg-accent-blue'
+                className={`heading-title flex h-full w-full items-center justify-center p-8 text-center text-pretty text-secondary ${
+                    isFront ? 'bg-accent-blue' : 'bg-text-dark'
                 }`}
             >
                 {proposal.text}

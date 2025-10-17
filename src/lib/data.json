@@ -52,25 +52,30 @@
     }
   ],
   "moods": {
-    "cosmicChill": {
-      "name": "Cosmic Chill",
-      "emoji": "✨",
-      "description": "Calm, grounded, effortlessly unbothered — you’re floating through it gracefully."
-    },
-    "mainCharacter": {
-      "name": "Main Character Energy",
-      "emoji": "🔥",
-      "description": "Confident, dramatic, self-assured — life is your movie and you’re in every scene."
-    },
-    "chaoticGood": {
-      "name": "Chaotic Good",
-      "emoji": "🌪",
-      "description": "Impulsive, creative, kind — you thrive in the mess and make it look fun."
-    },
-    "softExistential": {
-      "name": "Soft Existential",
-      "emoji": "🌙",
-      "description": "Reflective, dreamy, and beautifully overthinking everything — and that’s your superpower."
-    }
+  "cosmicChill": {
+    "name": "Cosmic Chill",
+    "emoji": "✨",
+    "description": "Calm, grounded, effortlessly unbothered — you’re floating through it gracefully. Nothing can shake your peace today; you know that everything unfolds at its own pace. You’re tuned into good energy, slow moments, and quiet confidence — the universe moves with you, not against you.",
+    "caption": "✨ Today I’m pure Cosmic Chill — unbothered, grounded, and vibing with the universe at 0.75x speed."
+  },
+  "mainCharacter": {
+    "name": "Main Character Energy",
+    "emoji": "🔥",
+    "description": "Confident, dramatic, self-assured — life is your movie and you’re in every scene. You’re walking through the day like it’s a perfectly lit shot, and every choice is a plot twist. You know your worth, your soundtrack slaps, and you’re fully committed to your own storyline.",
+    "caption": "🔥 Main Character mode: activated. Everything’s cinematic and I’m definitely the lead."
+  },
+  "chaoticGood": {
+    "name": "Chaotic Good",
+    "emoji": "🌪",
+    "description": "Impulsive, creative, kind — you thrive in the mess and make it look fun. You might not have a plan, but your intuition always seems to lead you somewhere interesting. You bring warmth and spontaneity to everything you touch — a beautiful storm of good intentions and bold ideas.",
+    "caption": "🌪 My mood today: Chaotic Good. No plan, just vibes — but somehow it always works out."
+  },
+  "softExistential": {
+    "name": "Soft Existential",
+    "emoji": "🌙",
+    "description": "Reflective, dreamy, and beautifully overthinking everything — and that’s your superpower. You see meaning in the smallest details and feel deeply connected to everything around you. Today you’re living in lowercase, floating between introspection and quiet wonder.",
+    "caption": "🌙 Soft Existential energy. Just me, my thoughts, and the entire universe in one coffee cup."
   }
+}
+
 }

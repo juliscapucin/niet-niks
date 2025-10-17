@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 
 :root {
-    --primary: oklch(13.735% 0.06106 261.452);
-    --secondary: oklch(92.4% 0.12 95.746);
+    --primary: oklch(86.465% 0.00419 285.968);
+    --secondary: oklch(90.725% 0.12738 95.631);
     --accent-red: oklch(54.781% 0.21983 28.732);
-    --accent-blue: oklch(55.217% 0.23421 264.583);
+    --accent-blue: oklch(48.127% 0.15484 265.532);
     --accent-green: oklch(65.217% 0.20321 142.583);
+    --text-dark: oklch(13.735% 0.06106 261.452);
 }
 
 @theme inline {
@@ -14,10 +15,10 @@
     --color-accent-red: var(--accent-red);
     --color-accent-blue: var(--accent-blue);
     --color-accent-green: var(--accent-green);
+    --color-text-dark: var(--text-dark);
 
-    --font-primary: var(--font-acma);
+    --font-primary: var(--font-rounded);
     --font-secondary: var(--font-noto);
-    --font-mono: var(--font-geist-mono);
 
     --radius-huge: 6rem;
 
@@ -105,7 +106,7 @@
     }
 
     .btn-primary {
-        @apply bg-primary px-4 py-2 font-medium text-secondary transition-colors duration-300 hover:bg-accent-blue;
+        @apply rounded-3xl bg-text-dark px-4 pt-4 pb-3 leading-none font-medium text-secondary transition-colors duration-300 hover:bg-accent-green;
     }
 
     .btn-secondary {
@@ -126,7 +127,8 @@
 
     /* HEADING STYLES */
     .heading-feedback {
-        @apply text-[20vw] leading-none font-thin uppercase mix-blend-overlay lg:text-[30vw] xl:text-[30vw];
+        @apply leading-none font-thin uppercase;
+        font-size: clamp(15rem, 30vw, 23rem);
     }
     .heading-display {
         @apply text-display-small leading-none font-thin lg:text-display-medium xl:text-display-large;
