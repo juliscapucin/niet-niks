@@ -102,10 +102,13 @@ export default function Card({
             custom={exitX}
         >
             <motion.div
-                className={`heading-title flex h-full w-full items-center justify-center p-8 text-center text-pretty text-secondary ${
+                className={`heading-title flex h-full w-full flex-col items-center justify-center p-8 text-center text-pretty text-secondary ${
                     isFront ? 'bg-accent-blue' : 'bg-text-dark'
                 }`}
             >
+                <span className='heading-headline mb-4 text-accent-green'>
+                    {proposal.id}
+                </span>
                 {proposal.text}
             </motion.div>
         </motion.div>

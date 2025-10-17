@@ -120,10 +120,8 @@ export default function Results({
             )}
 
             {/* SHARE BUTTONS */}
-            <div className='mt-4 flex flex-col items-center justify-center rounded-3xl bg-accent-blue p-8'>
-                <h2 className='heading-title text-secondary'>
-                    Share your result
-                </h2>
+            <div className='mt-4 flex flex-col items-center justify-center rounded-3xl p-8'>
+                <h2 className='heading-title'>Share your result</h2>
                 <div className='mt-4 flex gap-4'>
                     {[
                         { platform: 'twitter' as const, label: 'X' },

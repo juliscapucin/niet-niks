@@ -35,7 +35,8 @@ export default function RootLayout({
                         <Image
                             src='/moood-logo.png'
                             alt='Moood Logo'
-                            fill
+                            width={400}
+                            height={48}
                             className='h-full object-contain'
                             quality={100}
                         />
